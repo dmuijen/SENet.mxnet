@@ -81,9 +81,9 @@ def main():
         symbol = memonger.search_plan(symbol, data=(args.batch_size, 3, 32, 32) if args.data_type=="cifar10"
                                                     else (args.batch_size, 3, args.shape, args.shape))
     train = mx.io.ImageRecordIter(
-        path_imgrec         = os.path.join(args.data_dir, "train.rec") if args.data_type == 'cifar10' else
-                              os.path.join(args.data_dir, "train_256_q90.rec") if args.aug_level == 1
-                              else os.path.join(args.data_dir, "train_480_q90.rec") ,
+        path_imgrec         = os.path.join(args.data_dir, args.train_rec) if args.data_type == 'cifar10' else
+                              os.path.join(args.data_dir, args.train_rec) if args.aug_level == 1
+                              else os.path.join(args.data_dir, args.train_rec) ,
         label_width         = 1,
         data_name           = 'data',
         label_name          = 'softmax_label',
@@ -105,8 +105,8 @@ def main():
         num_parts           = kv.num_workers,
         part_index          = kv.rank)
     val = mx.io.ImageRecordIter(
-        path_imgrec         = os.path.join(args.data_dir, "val.rec") if args.data_type == 'cifar10' else
-                              os.path.join(args.data_dir, "val_256_q90.rec"),
+        path_imgrec         = os.path.join(args.data_dir, args.val_rec) if args.data_type == 'cifar10' else
+                              os.path.join(args.data_dir, args.val_rec),
         label_width         = 1,
         data_name           = 'data',
         label_name          = 'softmax_label',
@@ -149,6 +149,8 @@ if __name__ == "__main__":
     parser.add_argument('--gpus', type=str, default='0', help='the gpus will be used, e.g "0,1,2,3"')
     parser.add_argument('--data-dir', type=str, default='./data/imagenet/', help='the input data directory')
     parser.add_argument('--data-type', type=str, default='imagenet', help='the dataset type')
+    parser.add_argument('--train-rec', type=str, help='train data')
+    parser.add_argument('--val-rec', type=str, help='test data')
     parser.add_argument('--list-dir', type=str, default='./',
                         help='the directory which contain the training list file')
     parser.add_argument('--lr', type=float, default=0.1, help='initialization learning reate')
