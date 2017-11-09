@@ -79,7 +79,7 @@ def main():
     if args.memonger:
         import memonger
         symbol = memonger.search_plan(symbol, data=(args.batch_size, 3, 32, 32) if args.data_type=="cifar10"
-                                                    else (args.batch_size, 3, 224, 224))
+                                                    else (args.batch_size, 3, args.shape, args.shape))
     train = mx.io.ImageRecordIter(
         path_imgrec         = os.path.join(args.data_dir, "train.rec") if args.data_type == 'cifar10' else
                               os.path.join(args.data_dir, "train_256_q90.rec") if args.aug_level == 1
@@ -87,7 +87,7 @@ def main():
         label_width         = 1,
         data_name           = 'data',
         label_name          = 'softmax_label',
-        data_shape          = (3, 32, 32) if args.data_type=="cifar10" else (3, 224, 224),
+        data_shape          = (3, 32, 32) if args.data_type=="cifar10" else (3, args.shape, args.shape),
         batch_size          = args.batch_size,
         pad                 = 4 if args.data_type == "cifar10" else 0,
         fill_value          = 127,  # only used when pad is valid
@@ -111,7 +111,7 @@ def main():
         data_name           = 'data',
         label_name          = 'softmax_label',
         batch_size          = args.batch_size,
-        data_shape          = (3, 32, 32) if args.data_type=="cifar10" else (3, 224, 224),
+        data_shape          = (3, 32, 32) if args.data_type=="cifar10" else (3, args.shape, args.shape),
         rand_crop           = False,
         rand_mirror         = False,
         num_parts           = kv.num_workers,
@@ -168,6 +168,7 @@ if __name__ == "__main__":
                              'level 3: add rotation/shear augmentation based on level 2')
     parser.add_argument('--num-examples', type=int, default=1281167, help='the number of training examples')
     parser.add_argument('--kv-store', type=str, default='device', help='the kvstore type')
+    parser.add_argument('--shape', type=int, default=224, help='image basis dimension')
     parser.add_argument('--model-load-epoch', type=int, default=0,
                         help='load the model on an epoch using the model-load-prefix')
     parser.add_argument('--frequent', type=int, default=50, help='frequency of logging')
